@@ -4,6 +4,7 @@ import CreateLink from './CreateLink'
 import Header from './Header'
 import Login from './Login'
 import Search from './Search'
+import Tasks from './Tasks'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 class App extends Component {
@@ -18,6 +19,7 @@ class App extends Component {
               <Route exact path='/create' component={CreateLink} />
               <Route exact path='/search' component={Search} />
               <Route exact path='/top' component={LinkList} />
+              <Route exact path='/tasks' component={Tasks} />
               <Route exact path='/new/:page' component={LinkList} />
             </Switch>
           </div>

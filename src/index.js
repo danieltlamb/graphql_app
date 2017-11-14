@@ -15,7 +15,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
 // 2
-const httpLink = new HttpLink({ uri: 'https://api.graph.cool/simple/v1/cj9olv88d0jw801189sdrx4nv' })
+const httpLink = new HttpLink({ uri: 'https://api.graph.cool/simple/v1/cj9ysi2kcdk7m0178c4l8rk4h' })
 
 const middlewareAuthLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(GC_AUTH_TOKEN)
@@ -31,13 +31,8 @@ const middlewareAuthLink = new ApolloLink((operation, forward) => {
 const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink)
 
 // 3
-const client = new ApolloClient({
-  link: httpLinkWithAuthToken,
-  cache: new InMemoryCache()
-})
-
 const wsLink = new WebSocketLink({
-  uri: 'wss://subscriptions.us-west-2.graph.cool/v1/cj9olv88d0jw801189sdrx4nv',
+  uri: `wss://subscriptions.us-west-2.graph.cool/v1/cj9ysi2kcdk7m0178c4l8rk4h`,
   options: {
     reconnect: true,
     connectionParams: {
@@ -54,6 +49,11 @@ const link = split(
   wsLink,
   httpLinkWithAuthToken,
 )
+
+const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache()
+})
 
 // 4
 ReactDOM.render(
