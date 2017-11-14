@@ -8,6 +8,15 @@ type Link @model {
   votes: [Vote!]! @relation(name: "VotesOnLink")
 }
 
+type Task @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  description: String!
+  postedBy: User @relation(name: "UsersTasks")
+  completed: Complete @relation(name: "CompletedTask")
+}
+
 type User @model {
   id: ID! @isUnique
   createdAt: DateTime!
@@ -17,10 +26,18 @@ type User @model {
   password: String
   links: [Link!]! @relation(name: "UsersLinks")
   votes: [Vote!]! @relation(name: "UsersVotes")
+  tasks: [Task!]! @relation(name: "UsersTasks")
+  completes: [Complete!]! @relation(name: "UserCompleted")
 }
 
 type Vote @model {
   id: ID! @isUnique
   user: User! @relation(name: "UsersVotes")
   link: Link! @relation(name: "VotesOnLink")
+}
+
+type Complete @model {
+  id: ID! @isUnique
+  task: Task! @relation(name: "CompletedTask")
+  user: [User!]! @relation(name: "UserCompleted")
 }
