@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import TaskItem from './TaskItem'
 
 import { graphql } from 'react-apollo'
-import { GC_USER_ID } from '../constants'
 import gql from 'graphql-tag'
 
 export class TasksList extends Component{

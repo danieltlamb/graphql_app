@@ -43,6 +43,13 @@ class Tasks extends Component {
           ...previous.allTasks,
           subscriptionData.Task.node
         ]
+
+        for( var i=0; i<newAllTasks.length-1; i++ ) {
+          if ( newAllTasks[i].id === newAllTasks[i+1].id ) {
+            newAllTasks.splice(i, 1);
+          }
+        }
+
         const result = {
           ...previous,
           allTasks: newAllTasks
@@ -107,16 +114,37 @@ class Tasks extends Component {
       return
     }
     const { description } = this.state
+    const tmpTaskID = Math.round(Math.random() * -1000000);
     await this.props.CreateTaskMutation({
       variables: {
         description,
-        postedById
+        postedById,
       },
+      optimisticResponse: {
+        __typename: 'CreateTaskMutation',
+       createTask: {
+         id: tmpTaskID,
+         description: description,
+         completed:null,
+         createdAt: Date,
+         postedBy: {
+           id: postedById,
+           name: "John",
+           __typename: 'User'
+         },
+         __typename: 'Task',
+       },
+     },
       update: (store, { data: { createTask } }) => {
         const data = store.readQuery({
           query: ALL_TASKS_QUERY,
         })
-        // data.allTasks.splice(0,0,createTask)
+        const existingIndex = data.allTasks.findIndex((t) => t.id === tmpTaskID);
+        if (existingIndex !== -1) {
+          data.allTasks[existingIndex] = createTask;
+        } else {
+          data.allTasks.push(createTask)
+        }
         // data.allTasks.pop()
         // console.log("data2", data.allTasks.pop())
         store.writeQuery({
@@ -225,13 +253,19 @@ const CREATE_TASK_MUTATION = gql`
   mutation CreateTaskMutation($description: String!, $postedById: ID!) {
     createTask(
       description: $description,
-      postedById: $postedById
+        postedById: $postedById
       ) {
         id
+        __typename
         createdAt
         description
+        completed {
+          id
+          user
+        }
         postedBy {
           id
+          __typename
           name
         }
       }
